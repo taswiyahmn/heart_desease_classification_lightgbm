@@ -63,3 +63,64 @@ Pemilihan LightGBM didasarkan pada beberapa pertimbangan teknis. Dataset yang di
 1. *Cek missing values*  
    ```python
    df.isna().sum()
+| Column    | Missing Values |
+|-----------|----------------|
+| age       | 0              |
+| sex       | 0              |
+| cp        | 0              |
+| trestbps  | 0              |
+| chol      | 0              |
+| fbs       | 0              |
+| restecg   | 0              |
+| thalach   | 0              |
+| exang     | 0              |
+| oldpeak   | 0              |
+| slope     | 0              |
+| ca        | 0              |
+| thal      | 0              |
+| target    | 0              |
+
+dikarnakan tidak terdapat missing value pada dataset dan data sudah memiliki tipe kode numerik sehingga bisa dilanjutkan ke tahap scaling data.
+
+2. *Informasi Statistik Data*
+   ```python
+   df.describe()
+  |       | age   | sex   | cp    | trestbps | chol    | fbs   | restecg | thalach | exang  | oldpeak | slope  | ca     | thal   | target |
+|-------|-------|-------|-------|----------|---------|-------|---------|---------|--------|---------|--------|--------|--------|--------|
+| count | 1025  | 1025  | 1025  | 1025     | 1025    | 1025  | 1025    | 1025    | 1025   | 1025    | 1025   | 1025   | 1025   | 1025   |
+| mean  | 54.43 | 0.70  | 0.94  | 131.61   | 246.00  | 0.15  | 0.53    | 149.11  | 0.34   | 1.07    | 1.39   | 0.75   | 2.32   | 0.51   |
+| std   | 9.07  | 0.46  | 1.03  | 17.52    | 51.59   | 0.36  | 0.53    | 23.01   | 0.47   | 1.18    | 0.62   | 1.03   | 0.62   | 0.50   |
+| min   | 29.00 | 0.00  | 0.00  | 94.00    | 126.00  | 0.00  | 0.00    | 71.00   | 0.00   | 0.00    | 0.00   | 0.00   | 0.00   | 0.00   |
+| 25%   | 48.00 | 0.00  | 0.00  | 120.00   | 211.00  | 0.00  | 0.00    | 132.00  | 0.00   | 0.00    | 1.00   | 0.00   | 2.00   | 0.00   |
+| 50%   | 56.00 | 1.00  | 1.00  | 130.00   | 240.00  | 0.00  | 1.00    | 152.00  | 0.00   | 0.80    | 1.00   | 0.00   | 2.00   | 1.00   |
+| 75%   | 61.00 | 1.00  | 2.00  | 140.00   | 275.00  | 0.00  | 1.00    | 166.00  | 1.00   | 1.80    | 2.00   | 1.00   | 3.00   | 1.00   |
+| max   | 77.00 | 1.00  | 3.00  | 200.00   | 564.00  | 1.00  | 2.00    | 202.00  | 1.00   | 6.20    | 2.00   | 4.00   | 3.00   | 1.00   |
+
+3. *Data scaling*
+   ```python
+   le = LabelEncoder()
+    df['age'] = le.fit_transform(df['age'])
+    df['trestbps'] = le.fit_transform(df['trestbps'])
+    df['age'] = le.fit_transform(df['age'])
+    df['chol'] = le.fit_transform(df['chol'])
+    df['age'] = le.fit_transform(df['age'])
+    df['thalach'] = le.fit_transform(df['thalach'])
+    
+    df.head()
+
+  | Index | age | sex | cp | trestbps | chol | fbs | restecg | thalach | exang | oldpeak | slope | ca | thal | target |
+|-------|-----|-----|----|----------|------|-----|---------|---------|-------|---------|-------|----|------|--------|
+| 0     | 18  | 1   | 0  | 18       | 43   | 0   | 1       | 67      | 0     | 1.0     | 2     | 2  | 3    | 0      |
+| 1     | 19  | 1   | 0  | 28       | 34   | 1   | 0       | 54      | 1     | 3.1     | 0     | 0  | 3    | 0      |
+| 2     | 36  | 1   | 0  | 31       | 12   | 0   | 1       | 25      | 1     | 2.6     | 0     | 0  | 3    | 0      |
+| 3     | 27  | 1   | 0  | 33       | 34   | 0   | 1       | 60      | 0     | 0.0     | 2     | 1  | 3    | 0      |
+| 4     | 28  | 0   | 0  | 27       | 116  | 1   | 1       | 9       | 0     | 1.9     | 1     | 3  | 2    | 0      |
+
+Berdasarkan informasi yang diberikan bahwa terdapat 6 kolom yang memiliki rntan min dan max yang cukup jauh sehingga harus di scaling agar sama reta dengan kolom lainnya
+
+4. *Split Data*
+   ```python
+   X = df.drop(['target'], axis=1)
+   y = df['target']
+  ```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
