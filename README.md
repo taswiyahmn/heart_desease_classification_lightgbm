@@ -200,5 +200,112 @@ dt_model.fit(X_train, y_train)
 **Kekurangan:**
 - Rentan overfitting jika pohon terlalu dalam.
 
-    
+## 6. Evaluation
+### Penjelasan Metrik:
+1. **Precision**  
+   Mengukur seberapa akurat prediksi positif model. Formula:  
+   \[
+   \text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}}
+   \]
 
+2. **Recall**  
+   Mengukur seberapa banyak prediksi positif model yang benar. Formula:  
+   \[
+   \text{Recall} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Negatives}}
+   \]
+
+3. **F1-Score**  
+   Rata-rata harmonis antara precision dan recall, memberikan gambaran kinerja model secara keseluruhan. Formula:  
+   \[
+   \text{F1-Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+   \]
+
+4. **Accuracy**  
+   Proporsi prediksi yang benar dari total data. Formula:  
+   \[
+   \text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{\text{Total Samples}}
+   \]
+
+5. **Macro Average**  
+   Rata-rata nilai precision, recall, dan F1-score tanpa mempertimbangkan distribusi kelas.
+
+6. **Weighted Average**  
+   Rata-rata nilai precision, recall, dan F1-score yang mempertimbangkan distribusi kelas.
+
+### Hasil:
+- **Precision**, **Recall**, dan **F1-Score** untuk kedua kelas adalah 1.00, menunjukkan model sangat akurat.
+- **Accuracy**, **Macro avg**, dan **Weighted avg** juga 1.00, mengindikasikan performa model yang sangat baik dan konsisten.
+
+```python
+y_pred_lgb = bst.predict(X_test, num_iteration=bst.best_iteration)
+y_pred_binary_lgb = (y_pred_lgb >= 0.5).astype(int)
+accuracy_tuned = accuracy_score(y_test, y_pred_binary_lgb)
+print(f'🟢 Akurasi Lightgbm: {accuracy_tuned:.4f}')
+print('🟢 Classification Report Lightgbm:')
+print(classification_report(y_test, y_pred_binary_lgb))
+
+
+y_pred_dt = dt_model.predict(X_test)
+y_pred_proba_dt = dt_model.predict_proba(X_test)[:, 1]  # Untuk ROC
+accuracy_dt = accuracy_score(y_test, y_pred_dt)
+print(f'🟢 Akurasi Decision Tree: {accuracy_dt:.4f}')
+print('🟢 Classification Report Decision Tree:')
+print(classification_report(y_test, y_pred_dt))
+```
+
+### Hasil Evaluasi Model:
+
+#### 🟢 **Akurasi LightGBM**: 1.0000
+#### 🟢 **Classification Report LightGBM**:
+| Kelas | Precision | Recall | F1-Score | Support |
+|-------|-----------|--------|----------|---------|
+| 0     | 1.00      | 1.00   | 1.00     | 100     |
+| 1     | 1.00      | 1.00   | 1.00     | 105     |
+| **Accuracy** |  |  | **1.00** | **205**  |
+| Macro avg | 1.00 | 1.00 | 1.00 | 205 |
+| Weighted avg | 1.00 | 1.00 | 1.00 | 205 |
+
+#### 🟢 **Akurasi Decision Tree**: 0.9854
+#### 🟢 **Classification Report Decision Tree**:
+| Kelas | Precision | Recall | F1-Score | Support |
+|-------|-----------|--------|----------|---------|
+| 0     | 0.97      | 1.00   | 0.99     | 100     |
+| 1     | 1.00      | 0.97   | 0.99     | 105     |
+| **Accuracy** |  |  | **0.99** | **205**  |
+| Macro avg | 0.99 | 0.99 | 0.99 | 205 |
+| Weighted avg | 0.99 | 0.99 | 0.99 | 205 |
+
+### Penjelasan ROC Curve:
+
+ROC (Receiver Operating Characteristic) curve adalah alat evaluasi kinerja model klasifikasi yang digunakan untuk memvisualisasikan kemampuan model dalam membedakan antara kelas positif dan negatif.
+
+1. **AUC (Area Under the Curve)**  
+   AUC mengukur luas area di bawah ROC curve. Nilai AUC berkisar antara 0 dan 1. Semakin mendekati 1, semakin baik model dalam memisahkan kelas positif dan negatif.
+   - **AUC = 1**: Model sempurna dalam membedakan kelas.
+   - **AUC = 0.5**: Model tidak lebih baik dari tebakan acak.
+   - **AUC < 0.5**: Model lebih buruk daripada tebakan acak.
+
+2. **True Positive Rate (TPR) atau Recall**  
+   TPR mengukur seberapa banyak prediksi positif yang benar dari seluruh data positif yang sebenarnya.
+   \[
+   \text{TPR} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Negatives}}
+   \]
+
+3. **False Positive Rate (FPR)**  
+   FPR mengukur seberapa banyak prediksi negatif yang salah dari seluruh data negatif yang sebenarnya.
+   \[
+   \text{FPR} = \frac{\text{False Positives}}{\text{False Positives} + \text{True Negatives}}
+   \]
+
+4. **ROC Curve**  
+   ROC curve adalah plot antara **TPR** (di sumbu Y) dan **FPR** (di sumbu X) untuk berbagai threshold. ROC curve membantu untuk memilih threshold terbaik yang menghasilkan keseimbangan antara sensitivitas dan spesifisitas.
+
+### Interpretasi ROC Curve:
+- **Kurva yang lebih dekat dengan sudut kiri atas** menunjukkan model yang lebih baik dalam membedakan kelas positif dan negatif.
+- **Kurva yang mendekati garis diagonal** menunjukkan kinerja model yang buruk.
+
+Visualisasi ROC Lightgbm
+![image](https://github.com/user-attachments/assets/6a93eb31-e02a-44ce-8531-071edee20138)
+
+Visualisasi ROC Decision tree
+![image](https://github.com/user-attachments/assets/2d651b1e-4ec7-4b27-b184-69cae51edb10)
