@@ -58,8 +58,6 @@ Pemilihan LightGBM didasarkan pada beberapa pertimbangan teknis. Dataset yang di
 - *Heatmap korelasi* antar fitur.  
 
 ---
-
-## 4. Data Preparation  
 1. *Cek missing values*  
    ```python
    df.isna().sum()
@@ -98,6 +96,7 @@ dikarnakan tidak terdapat missing value pada dataset dan data sudah memiliki tip
 
 Berdasarkan informasi yang diberikan bahwa terdapat 6 kolom yang memiliki rntan min dan max yang cukup jauh sehingga harus di scaling agar sama reta dengan kolom lainnya
 
+## 4. Data Preparation  
 3. *Data scaling*
    ```python
    le = LabelEncoder()
@@ -122,5 +121,84 @@ Berdasarkan informasi yang diberikan bahwa terdapat 6 kolom yang memiliki rntan 
    ```python
    X = df.drop(['target'], axis=1)
    y = df['target']
-  ```python
-  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+## 5. Modelling
+# Tahap Pembangunan Model Klasifikasi
+
+Tahap ini melibatkan pembangunan beberapa model klasifikasi untuk memprediksi persetujuan pinjaman. Setiap model memiliki karakteristik dan cara kerja yang berbeda.
+
+# Model 1: LightGBM
+
+### Cara Kerja
+LightGBM adalah library machine learning yang digunakan untuk implementasi model Gradient Boosting Decision Tree (GBDT). LightGBM bekerja dengan cara membangun beberapa pohon keputusan secara bertahap dan memperbaiki kesalahan model sebelumnya.
+
+### Parameter:
+- `objective='binary'`: Karena ini adalah masalah klasifikasi biner.
+- `metric='binary_error'`: Kita menggunakan error sebagai metric untuk evaluasi.
+- `boosting_type='gbdt'`: Gradient Boosting Decision Tree (GBDT).
+- `num_leaves=31`: Jumlah leaves dalam tree.
+- `learning_rate=0.1`: Learning rate yang digunakan untuk memperbarui bobot model.
+- `feature_fraction=0.9`: Persentase fitur yang dipilih untuk tiap iterasi.
+
+### Kode:
+```python
+import lightgbm as lgb
+
+# Menyiapkan data untuk training dan testing
+train_data = lgb.Dataset(X_train, label=y_train)
+test_data = lgb.Dataset(X_test, label=y_test, reference=train_data)
+
+# Mendefinisikan parameter LightGBM
+params = {
+    'objective': 'binary',  # Karena ini adalah masalah klasifikasi biner
+    'metric': 'binary_error',  # Kita menggunakan error sebagai metric
+    'boosting_type': 'gbdt',  # Gradient Boosting Decision Tree (GBDT)
+    'num_leaves': 31,  # Jumlah leaves dalam tree
+    'learning_rate': 0.1,  # Learning rate
+    'feature_fraction': 0.9,  # Persentase fitur yang dipilih untuk tiap iterasi
+}
+
+# Melatih model LightGBM
+bst = lgb.train(params,
+                train_data,
+                valid_sets=[test_data],  # Data validasi
+                num_boost_round=100,  # Jumlah iterasi
+                callbacks=[lgb.early_stopping(stopping_rounds=50)])  # Jika tidak ada peningkatan dalam 50 iterasi, pelatihan dihentikan
+```
+**Kelebihan:**
+- Cepat dan efisien dalam memproses data besar.
+- Dapat menangani data dengan missing values.
+- Mendukung fitur-fitur khusus untuk pengaturan model yang lebih lanjut.
+
+**Kekurangan:**
+- Memerlukan lebih banyak tuning parameter dibandingkan dengan model yang lebih sederhana seperti Decision Tree.
+
+
+## Model 2: Decision Tree
+
+### Cara Kerja
+Decision Tree membagi data berdasarkan fitur yang memberikan informasi paling tinggi (dengan pengukuran seperti Gini atau Entropy). Setiap cabang merepresentasikan keputusan hingga mencapai leaf node (output prediksi).
+
+### Parameter:
+- `random_state=42`: Untuk menjaga hasil tetap konsisten.
+
+### Kode:
+```python
+from sklearn.tree import DecisionTreeClassifier
+
+# Membuat model Decision Tree
+dt_model = DecisionTreeClassifier(random_state=42)
+
+# Melatih model dengan data training
+dt_model.fit(X_train, y_train)
+```
+**Kelebihan:**
+- Mudah dipahami dan divisualisasikan.
+- Tidak memerlukan normalisasi data.
+
+**Kekurangan:**
+- Rentan overfitting jika pohon terlalu dalam.
+
+    
+
