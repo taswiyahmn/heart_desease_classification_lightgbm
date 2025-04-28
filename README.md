@@ -96,6 +96,8 @@ dikarnakan tidak terdapat missing value pada dataset dan data sudah memiliki tip
 | 75%   | 61.00 | 1.00  | 2.00  | 140.00   | 275.00  | 0.00  | 1.00    | 166.00  | 1.00   | 1.80    | 2.00   | 1.00   | 3.00   | 1.00   |
 | max   | 77.00 | 1.00  | 3.00  | 200.00   | 564.00  | 1.00  | 2.00    | 202.00  | 1.00   | 6.20    | 2.00   | 4.00   | 3.00   | 1.00   |
 
+Berdasarkan informasi yang diberikan bahwa terdapat 6 kolom yang memiliki rntan min dan max yang cukup jauh sehingga harus di scaling agar sama reta dengan kolom lainnya
+
 3. *Data scaling*
    ```python
    le = LabelEncoder()
@@ -116,11 +118,9 @@ dikarnakan tidak terdapat missing value pada dataset dan data sudah memiliki tip
 | 3     | 27  | 1   | 0  | 33       | 34   | 0   | 1       | 60      | 0     | 0.0     | 2     | 1  | 3    | 0      |
 | 4     | 28  | 0   | 0  | 27       | 116  | 1   | 1       | 9       | 0     | 1.9     | 1     | 3  | 2    | 0      |
 
-Berdasarkan informasi yang diberikan bahwa terdapat 6 kolom yang memiliki rntan min dan max yang cukup jauh sehingga harus di scaling agar sama reta dengan kolom lainnya
-
 4. *Split Data*
    ```python
    X = df.drop(['target'], axis=1)
    y = df['target']
   ```python
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
