@@ -321,8 +321,18 @@ ROC (Receiver Operating Characteristic) curve adalah alat evaluasi kinerja model
 - **Kurva yang lebih dekat dengan sudut kiri atas** menunjukkan model yang lebih baik dalam membedakan kelas positif dan negatif.
 - **Kurva yang mendekati garis diagonal** menunjukkan kinerja model yang buruk.
 
-Visualisasi ROC Lightgbm
+- Visualisasi ROC Lightgbm
 ![image](https://github.com/user-attachments/assets/6a93eb31-e02a-44ce-8531-071edee20138)
 
-Visualisasi ROC Decision tree
+- Visualisasi ROC Decision tree
 ![image](https://github.com/user-attachments/assets/2d651b1e-4ec7-4b27-b184-69cae51edb10)
+
+### Ringkasan ROC Curve
+
+- **LightGBM**  
+  - **AUC = 1.00**  
+  Kurva ROC sempurna: model memisahkan kelas positif dan negatif tanpa ada kesalahan (TPR = 1, FPR = 0).
+
+- **Decision Tree**  
+  - **AUC ≈ 0.99**  
+  Kurva ROC nyaris ideal: hampir tidak ada trade-off antara sensitivitas dan spesifisitas, hanya sedikit false positives/negatives pada beberapa threshold.
