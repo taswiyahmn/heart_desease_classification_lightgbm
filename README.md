@@ -1,5 +1,3 @@
-# heart_desease_classification_lightgbm
-
 # Laporan Proyek Machine Learning – Heart Disease Classification  
 *Nama*: Taswiyah Marsyah Noor  
 *Domain Proyek*: Healthcare / Diagnostik Kesehatan  
@@ -51,11 +49,6 @@ Pemilihan LightGBM didasarkan pada beberapa pertimbangan teknis. Dataset yang di
   12. ca – number of major vessels (0–3)  
   13. thal – thalassemia (1 = normal; 2 = fixed defect; 3 = reversible defect)  
   14. target – label (0 = sehat, 1 = sakit)  
-
-*(Opsional) EDA / Visualisasi*  
-- *Distribusi target*: bar chart (plot distribusi 0 vs 1).  
-- *Histograms* untuk umur, tekanan darah, kolesterol.  
-- *Heatmap korelasi* antar fitur.  
 
 ---
 1. *Cek missing values*  
