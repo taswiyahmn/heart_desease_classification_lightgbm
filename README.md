@@ -9,7 +9,7 @@
 ## 1. Domain Proyek  
 Penyakit jantung merupakan salah satu penyebab kematian terbesar di seluruh dunia. Hal ini diperkuat oleh laporan WHO yang diterbitkan pada 7 Agustus 2024, yang menyatakan bahwa Ischemic Heart Disease menjadi penyakit dengan tingkat kematian tertinggi secara global, diikuti oleh COVID-19 dan stroke.
 
-Berdasarkan fakta tersebut, proyek ini dikembangkan untuk membantu individu dalam meminimalkan atau menghindari risiko penyakit jantung, dengan melakukan klasifikasi berdasarkan parameter yang tersedia dalam dataset. Meskipun sudah banyak penelitian dan pembuatan model machine learning menggunakan dataset ini, dalam proyek ini saya menggunakan pendekatan yang berbeda dengan menerapkan algoritma LightGBM — sebuah metode yang masih relatif jarang digunakan untuk kasus ini — untuk mengevaluasi potensi akurasi yang dapat dihasilkan.
+Berdasarkan fakta tersebut, proyek ini dikembangkan untuk membantu individu dalam meminimalkan atau menghindari risiko penyakit jantung, dengan melakukan klasifikasi berdasarkan parameter yang tersedia dalam dataset. Meskipun sudah banyak penelitian dan pembuatan model machine learning menggunakan dataset ini, dalam proyek ini saya menggunakan pendekatan yang berbeda dengan menerapkan algoritma LightGBM sebuah metode yang masih relatif jarang digunakan untuk kasus ini untuk mengevaluasi potensi akurasi yang dapat dihasilkan.
 
 Pemilihan LightGBM didasarkan pada beberapa pertimbangan teknis. Dataset yang digunakan berukuran sedang, sehingga membutuhkan model yang mampu melakukan pelatihan secara cepat dan efisien dalam penggunaan memori. LightGBM, dengan pendekatan leaf-wise tree growth dibandingkan metode level-wise pada algoritma lain, memungkinkan pemodelan hubungan kompleks antar fitur dengan lebih efektif tanpa meningkatkan waktu komputasi secara signifikan. Selain itu, LightGBM mendukung proses hyperparameter tuning secara fleksibel, yang dapat membantu dalam mengoptimalkan performa model sesuai dengan karakteristik data yang tersedia. 
 
@@ -95,6 +95,30 @@ dikarnakan tidak terdapat missing value pada dataset dan data sudah memiliki tip
 | max   | 77.00 | 1.00  | 3.00  | 200.00   | 564.00  | 1.00  | 2.00    | 202.00  | 1.00   | 6.20    | 2.00   | 4.00   | 3.00   | 1.00   |
 
 Berdasarkan informasi yang diberikan bahwa terdapat 6 kolom yang memiliki rntan min dan max yang cukup jauh sehingga harus di scaling agar sama reta dengan kolom lainnya
+
+* Distribusi Taget (0 dan 1)
+![image](https://github.com/user-attachments/assets/955d11ba-d569-4850-9841-14740efbf2e2)
+
+* Heatmap correlation terhadap fitur
+![image](https://github.com/user-attachments/assets/14327d50-667d-417e-a8ed-2d184df71899)
+
+### Penjelasan Korelasi Fitur dan Target
+1. **Korelasi Positif Signifikan**:
+   - Fitur seperti `cp`, `thalach`, dan `exang` memiliki korelasi positif dengan target, menunjukkan hubungan yang jelas dengan peningkatan risiko penyakit jantung.
+
+2. **Korelasi Negatif Signifikan**:
+   - Fitur seperti `oldpeak` dan `ca` memiliki korelasi negatif dengan target, di mana penurunan nilai fitur-fitur ini mengindikasikan peningkatan risiko penyakit jantung.
+
+3. **Korelasi Antar Fitur**:
+   - Korelasi negatif antara `slope` dan `oldpeak` serta korelasi negatif antara `age` dan `thalach` memberi wawasan penting tentang interaksi antar faktor risiko.
+
+4. **Korelasi Rendah**:
+   - Fitur seperti `trestbps`, `chol`, `fbs`, dan `sex` menunjukkan korelasi rendah dengan target, namun tetap memberikan informasi tambahan untuk model.
+
+### Interpretasi
+- **Positif**: Korelasi yang kuat antara beberapa fitur dengan target sangat membantu dalam pemodelan prediksi.
+- **Korelasi Negatif dan Antar Fitur**: Menunjukkan faktor-faktor yang mempengaruhi risiko penyakit jantung secara signifikan.
+- **Korelasi Rendah**: Fitur-fitur ini mungkin tidak berpengaruh besar, tetapi masih memberikan nilai tambahan dalam pemodelan.
 
 ## 4. Data Preparation  
 3. *Data scaling*
