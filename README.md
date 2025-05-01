@@ -35,20 +35,21 @@ Pemilihan LightGBM didasarkan pada beberapa pertimbangan teknis. Dataset yang di
 - *Sumber*: UCI Heart Disease Dataset (atau Kaggle Heart Disease UCI)  
 - *Jumlah Sampel*: 1.025 baris  
 - *Fitur (14 kolom)*:  
-  1. age (int) – usia pasien  
-  2. sex (0=female, 1=male)  
-  3. cp – chest pain type (0–3)  
-  4. trestbps – resting blood pressure  
-  5. chol – serum cholesterol  
-  6. fbs – fasting blood sugar > 120 mg/dl (0/1)  
-  7. restecg – resting ECG results (0–2)  
-  8. thalach – max heart rate achieved  
-  9. exang – exercise induced angina (0/1)  
-  10. oldpeak – ST depression induced by exercise  
-  11. slope – slope of peak exercise ST segment (0–2)  
-  12. ca – number of major vessels (0–3)  
-  13. thal – thalassemia (1 = normal; 2 = fixed defect; 3 = reversible defect)  
-  14. target – label (0 = sehat, 1 = sakit)  
+    1. Fitur (14 kolom):
+    2. age (int) – usia pasien
+    3. sex – jenis kelamin pasien (0 = perempuan, 1 = laki-laki)
+    4. cp – jenis nyeri dada (0–3)
+    5. trestbps – tekanan darah saat istirahat (resting blood pressure)
+    6. chol – kadar kolesterol dalam serum
+    7. fbs – kadar gula darah puasa > 120 mg/dl (0 = tidak, 1 = ya)
+    8. restecg – hasil elektrokardiogram saat istirahat (0–2)
+    9. thalach – detak jantung maksimum yang dicapai
+    10. exang – angina yang diinduksi oleh olahraga (0 = tidak, 1 = ya)
+    11. oldpeak – tingkat depresi segmen ST akibat latihan
+    12. slope – kemiringan segmen ST saat puncak latihan (0–2)
+    13. ca – jumlah pembuluh darah utama yang terlihat (0–3)
+    14. thal – kondisi thalassemia (1 = normal, 2 = cacat tetap, 3 = cacat reversibel)
+    15. target – label kondisi pasien (0 = sehat, 1 = memiliki penyakit jantung) 
 
 ---
 1. *Cek missing values*  
@@ -71,7 +72,7 @@ Pemilihan LightGBM didasarkan pada beberapa pertimbangan teknis. Dataset yang di
 | thal      | 0              |
 | target    | 0              |
 
-dikarnakan tidak terdapat missing value pada dataset dan data sudah memiliki tipe kode numerik sehingga bisa dilanjutkan ke tahap scaling data.
+Berdasarkan hasil eksplorasi awal, dataset tidak mengandung nilai kosong (missing value) maupun data duplikat. Selain itu, seluruh fitur pada dataset telah menggunakan tipe data numerik.
 
 2. *Informasi Statistik Data*
    ```python
@@ -115,17 +116,6 @@ Berdasarkan informasi yang diberikan bahwa terdapat 6 kolom yang memiliki rntan 
 
 ## 4. Data Preparation  
 3. *Data scaling*
-   ```python
-   le = LabelEncoder()
-    df['age'] = le.fit_transform(df['age'])
-    df['trestbps'] = le.fit_transform(df['trestbps'])
-    df['age'] = le.fit_transform(df['age'])
-    df['chol'] = le.fit_transform(df['chol'])
-    df['age'] = le.fit_transform(df['age'])
-    df['thalach'] = le.fit_transform(df['thalach'])
-    
-    df.head()
-
   | Index | age | sex | cp | trestbps | chol | fbs | restecg | thalach | exang | oldpeak | slope | ca | thal | target |
 |-------|-----|-----|----|----------|------|-----|---------|---------|-------|---------|-------|----|------|--------|
 | 0     | 18  | 1   | 0  | 18       | 43   | 0   | 1       | 67      | 0     | 1.0     | 2     | 2  | 3    | 0      |
@@ -133,17 +123,14 @@ Berdasarkan informasi yang diberikan bahwa terdapat 6 kolom yang memiliki rntan 
 | 2     | 36  | 1   | 0  | 31       | 12   | 0   | 1       | 25      | 1     | 2.6     | 0     | 0  | 3    | 0      |
 | 3     | 27  | 1   | 0  | 33       | 34   | 0   | 1       | 60      | 0     | 0.0     | 2     | 1  | 3    | 0      |
 | 4     | 28  | 0   | 0  | 27       | 116  | 1   | 1       | 9       | 0     | 1.9     | 1     | 3  | 2    | 0      |
+Pada proyek ini, proses scaling dilakukan dengan menggunakan Standard Scaler, yaitu metode yang mentransformasikan data agar memiliki distribusi dengan rata-rata nol dan standar deviasi satu. Teknik ini dipilih untuk menyamakan skala atau rentang nilai dari setiap fitur numerik sehingga seluruh fitur berada dalam kisaran yang seragam
 
 4. *Split Data*
-   ```python
-   X = df.drop(['target'], axis=1)
-   y = df['target']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+Proses pembagian data (split) dilakukan untuk memisahkan data pelatihan dan data pengujian. Dalam proyek ini, data dibagi dengan proporsi 80:20, di mana 20% data digunakan sebagai data uji (test data) dan sisanya, yaitu 80%, digunakan sebagai data latih (training data). Pembagian ini dilakukan untuk memastikan bahwa model dapat dilatih dengan data yang cukup serta dievaluasi kinerjanya menggunakan data yang belum pernah dilihat sebelumnya.
 
 ## 5. Modelling
 # Tahap Pembangunan Model Klasifikasi
-
-Tahap ini melibatkan pembangunan beberapa model klasifikasi untuk memprediksi persetujuan pinjaman. Setiap model memiliki karakteristik dan cara kerja yang berbeda.
+Decision Tree dipilih sebagai model dasar atau baseline karena algoritma ini memiliki struktur yang sederhana, mudah dipahami, dan cepat dalam pelatihan awal. Setelah itu, LightGBM digunakan sebagai model utama yang diharapkan dapat memberikan performa yang lebih baik, mengingat algoritma ini merupakan salah satu model boosting yang unggul dalam kecepatan pelatihan dan akurasi prediksi.
 
 # Model 1: LightGBM
 
@@ -158,31 +145,6 @@ LightGBM adalah library machine learning yang digunakan untuk implementasi model
 - `learning_rate=0.1`: Learning rate yang digunakan untuk memperbarui bobot model.
 - `feature_fraction=0.9`: Persentase fitur yang dipilih untuk tiap iterasi.
 
-### Kode:
-```python
-import lightgbm as lgb
-
-# Menyiapkan data untuk training dan testing
-train_data = lgb.Dataset(X_train, label=y_train)
-test_data = lgb.Dataset(X_test, label=y_test, reference=train_data)
-
-# Mendefinisikan parameter LightGBM
-params = {
-    'objective': 'binary',  # Karena ini adalah masalah klasifikasi biner
-    'metric': 'binary_error',  # Kita menggunakan error sebagai metric
-    'boosting_type': 'gbdt',  # Gradient Boosting Decision Tree (GBDT)
-    'num_leaves': 31,  # Jumlah leaves dalam tree
-    'learning_rate': 0.1,  # Learning rate
-    'feature_fraction': 0.9,  # Persentase fitur yang dipilih untuk tiap iterasi
-}
-
-# Melatih model LightGBM
-bst = lgb.train(params,
-                train_data,
-                valid_sets=[test_data],  # Data validasi
-                num_boost_round=100,  # Jumlah iterasi
-                callbacks=[lgb.early_stopping(stopping_rounds=50)])  # Jika tidak ada peningkatan dalam 50 iterasi, pelatihan dihentikan
-```
 **Kelebihan:**
 - Cepat dan efisien dalam memproses data besar.
 - Dapat menangani data dengan missing values.
@@ -201,15 +163,6 @@ Decision Tree membagi data berdasarkan fitur yang memberikan informasi paling ti
 - `random_state=42`: Untuk menjaga hasil tetap konsisten.
 
 ### Kode:
-```python
-from sklearn.tree import DecisionTreeClassifier
-
-# Membuat model Decision Tree
-dt_model = DecisionTreeClassifier(random_state=42)
-
-# Melatih model dengan data training
-dt_model.fit(X_train, y_train)
-```
 **Kelebihan:**
 - Mudah dipahami dan divisualisasikan.
 - Tidak memerlukan normalisasi data.
@@ -221,9 +174,10 @@ dt_model.fit(X_train, y_train)
 ### Penjelasan Metrik:
 1. **Precision**  
    Mengukur seberapa akurat prediksi positif model. Formula:  
-   \[
-   \text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}}
-   \]
+$$
+\text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}}
+$$
+
 
 2. **Recall**  
    Mengukur seberapa banyak prediksi positif model yang benar. Formula:  
@@ -252,23 +206,6 @@ dt_model.fit(X_train, y_train)
 ### Hasil:
 - **Precision**, **Recall**, dan **F1-Score** untuk kedua kelas adalah 1.00, menunjukkan model sangat akurat.
 - **Accuracy**, **Macro avg**, dan **Weighted avg** juga 1.00, mengindikasikan performa model yang sangat baik dan konsisten.
-
-```python
-y_pred_lgb = bst.predict(X_test, num_iteration=bst.best_iteration)
-y_pred_binary_lgb = (y_pred_lgb >= 0.5).astype(int)
-accuracy_tuned = accuracy_score(y_test, y_pred_binary_lgb)
-print(f'🟢 Akurasi Lightgbm: {accuracy_tuned:.4f}')
-print('🟢 Classification Report Lightgbm:')
-print(classification_report(y_test, y_pred_binary_lgb))
-
-
-y_pred_dt = dt_model.predict(X_test)
-y_pred_proba_dt = dt_model.predict_proba(X_test)[:, 1]  # Untuk ROC
-accuracy_dt = accuracy_score(y_test, y_pred_dt)
-print(f'🟢 Akurasi Decision Tree: {accuracy_dt:.4f}')
-print('🟢 Classification Report Decision Tree:')
-print(classification_report(y_test, y_pred_dt))
-```
 
 ### Hasil Evaluasi Model:
 
